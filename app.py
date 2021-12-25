@@ -1,13 +1,10 @@
 import dash
-import dash_core_components as dcc
-from dash_core_components.Markdown import Markdown
-import dash_html_components as html
+from dash import dcc
+from dash import html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 
-
-import pandas as pd
-import random
+from styleTransfer import make_image
 
 app = dash.Dash(__name__, meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}], external_stylesheets=[dbc.themes.SUPERHERO])
 app.title = 'SpaceBar'
@@ -16,13 +13,7 @@ server = app.server
 
 ########################################################
 
-app.layout = html.Div([
-
-    html.Div([
-        dcc.Graph(id='indicator-graphic')
-        
-    ], style = {'width' : '60%', 'float': 'left', 'display': 'inline-block'}),
-    
+app.layout = html.Div([    
     
     html.Div([
         dcc.Upload(
@@ -45,9 +36,9 @@ app.layout = html.Div([
         multiple=False
     ),
         
+        html.Div(id='output-image'),
         
-        
-    ], style = {'width' : '40%', 'float': 'right', 'display': 'inline-block'})
+    ], style = {'width' : '40%', 'display': 'inline-block'})
 
   
 ])
@@ -55,10 +46,12 @@ app.layout = html.Div([
 ########################################################
 
 @app.callback(
-
+Output('output-image', 'children'),
+Input('upload-image', 'contents')
 )
-def style_transfer():
-    return
+def style_transfer(upload_image):
+    image = make_image(upload_image)
+    return image
 
 if __name__ == '__main__':
     app.run_server(debug=True)
